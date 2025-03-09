@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using PrometheusActivator.Utilities;
+using System.Diagnostics;
+using System.Windows;
 
 namespace PrometheusActivator;
 
@@ -12,11 +14,12 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
+
     private void NavigationViewControl_ItemInvoked(ModernWpf.Controls.NavigationView sender, ModernWpf.Controls.NavigationViewItemInvokedEventArgs args)
     {
         if (args.InvokedItemContainer != null && args.InvokedItemContainer.Tag != null)
         {
-            var item = args.InvokedItemContainer.Tag.ToString();
+            string item = args.InvokedItemContainer.Tag.ToString();
             if (item != null)
             {
                 switch (item)
@@ -25,7 +28,7 @@ public partial class MainWindow : Window
                         //ContentFrame.Navigate(typeof(Pages.HomePage));
                         break;
                     case "Pages.WindowsPage":
-                        //ContentFrame.Navigate(typeof(Pages.WindowsPage));
+                        ContentFrame.Navigate(typeof(Pages.WindowsPage));
                         break;
                     case "Pages.OfficePage":
                         //ContentFrame.Navigate(typeof(Pages.OfficePage));

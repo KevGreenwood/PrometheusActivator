@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+﻿using NetFwTypeLib;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
-using NetFwTypeLib;
 
 
 namespace PrometheusActivator.Utilities
@@ -10,6 +10,8 @@ namespace PrometheusActivator.Utilities
     public class AdobeProduct : INotifyPropertyChanged
     {
         private bool _isFirewallBlocked;
+        private bool _isUpdating;
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -18,18 +20,36 @@ namespace PrometheusActivator.Utilities
             get => _isFirewallBlocked;
             set
             {
-                if (_isFirewallBlocked != value)
+                if (_isFirewallBlocked != value && !_isUpdating)
                 {
-                    _isFirewallBlocked = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsFirewallBlocked)));
-
-                    if (value)
-                        AdobeHandler.AddFirewallBlockRule(this);
-                    else
-                        AdobeHandler.RemoveFirewallRule(Name);
+                    _isUpdating = true;
+                    UpdateFirewallStateAsync(value).ConfigureAwait(false);
                 }
             }
         }
+
+        private async Task UpdateFirewallStateAsync(bool value)
+        {
+            try
+            {
+                bool success;
+                if (value)
+                    success = await AdobeHandler.AddFirewallBlockRule(this);
+                else
+                    success = await AdobeHandler.RemoveFirewallRule(Name);
+
+                if (success)
+                {
+                    _isFirewallBlocked = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsFirewallBlocked)));
+                }
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
+        }
+
         public string Name { get; set; }
         public string Version { get; set; }
         public string ExecutablePath { get; set; }
@@ -41,11 +61,12 @@ namespace PrometheusActivator.Utilities
         public static List<AdobeProduct> Products = new() { };
         private static readonly string[] AdobePaths =
         {
-            @"C:\Program Files\Adobe",
-            @"C:\Program Files (x86)\Adobe"
+            Environment.ExpandEnvironmentVariables(@"%PROGRAMFILES%\Adobe"),
+            Environment.ExpandEnvironmentVariables(@"%PROGRAMFILES(x86)%\Adobe")
         };
+
         private static readonly HashSet<string> ExecutableNames = new()
-        { 
+        {
             "Photoshop.exe",
             "Illustrator.exe",
             "AfterFX.exe",
@@ -78,139 +99,150 @@ namespace PrometheusActivator.Utilities
             foreach (var executable in executables)
             {
                 FileVersionInfo info = FileVersionInfo.GetVersionInfo(executable);
-                var productName = info.ProductName ?? Path.GetFileNameWithoutExtension(executable);
+                string productName = info.ProductName ?? Path.GetFileNameWithoutExtension(executable);
 
-                var product = new AdobeProduct
+                AdobeProduct product = new()
                 {
                     Name = productName,
-                    Version = info.ProductVersion ?? "Unknown",
+                    Version = info.ProductVersion ?? "1.0.0",
                     ExecutablePath = executable,
-                    IsFirewallBlocked = await CheckFirewallRuleAsync(productName),
+                    IsFirewallBlocked = await FirewallRuleExists(productName),
                     Icon = await Task.Run(() => GetLargeIconAsImageSource(executable))
                 };
                 Products.Add(product);
             }
         }
 
-        public static async Task<bool> CheckFirewallRuleAsync(string ruleName)
-        {
-            return await Task.Run(() => FirewallRuleExists(ruleName));
-        }
 
-        public static bool FirewallRuleExists(string ruleName)
+        public static async Task<bool> FirewallRuleExists(string ruleName)
         {
             try
             {
-                INetFwPolicy2 fwPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
-
-                bool hasInbound = false;
-                bool hasOutbound = false;
-
-                foreach (INetFwRule rule in fwPolicy.Rules)
+                return await Task.Run(() =>
                 {
-                    if (rule.Name == ruleName)
+                    INetFwPolicy2 fwPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
+                    bool hasInbound = false;
+                    bool hasOutbound = false;
+
+                    foreach (INetFwRule rule in fwPolicy.Rules)
                     {
-                        if (rule.Direction == NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_IN)
+                        if (rule.Name == ruleName)
                         {
-                            hasInbound = true;
-                        }
-                        else if (rule.Direction == NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT)
-                        {
-                            hasOutbound = true;
+                            if (rule.Direction == NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_IN)
+                            {
+                                hasInbound = true;
+                            }
+                            else if (rule.Direction == NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT)
+                            {
+                                hasOutbound = true;
+                            }
+
+                            if (hasInbound && hasOutbound) break;
                         }
                     }
-                }
 
-                return hasInbound && hasOutbound;
+
+                    return hasInbound && hasOutbound;
+                });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.WriteLine($"Error al verificar reglas de firewall: {ex.Message}");
                 return false;
             }
         }
 
-
-        public static bool AddFirewallBlockRule(AdobeProduct product)
+        public static async Task<bool> AddFirewallBlockRule(AdobeProduct product)
         {
             try
             {
-                if (FirewallRuleExists(product.Name))
+                return await Task.Run(async () =>
                 {
-                    RemoveFirewallRule(product.Name);
-                }
-
-                INetFwPolicy2 fwPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
-
-                Type ruleType = Type.GetTypeFromProgID("HNetCfg.FwRule");
-
-                INetFwRule inboundRule = (INetFwRule)Activator.CreateInstance(ruleType);
-                inboundRule.Name = $"{product.Name}";
-                inboundRule.Description = $"Blocks inbound network access for {product.Name}, allowing you to use the software for free at the cost of losing online functionalities.";
-                inboundRule.ApplicationName = product.ExecutablePath;
-                inboundRule.Action = NET_FW_ACTION_.NET_FW_ACTION_BLOCK;
-                inboundRule.Direction = NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_IN;
-                inboundRule.Enabled = true;
-                inboundRule.Profiles = (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL;
-
-                INetFwRule outboundRule = (INetFwRule)Activator.CreateInstance(ruleType);
-                outboundRule.Name = $"{product.Name}";
-                outboundRule.Description = $"Blocks outbound network access for {product.Name}, allowing you to use the software for free at the cost of losing online functionalities.";
-                outboundRule.ApplicationName = product.ExecutablePath;
-                outboundRule.Action = NET_FW_ACTION_.NET_FW_ACTION_BLOCK;
-                outboundRule.Direction = NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT;
-                outboundRule.Enabled = true;
-                outboundRule.Profiles = (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL;
-
-                fwPolicy.Rules.Add(inboundRule);
-                fwPolicy.Rules.Add(outboundRule);
-
-                product.IsFirewallBlocked = true;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error al agregar reglas de firewall: {ex.Message}");
-                return false;
-            }
-        }
-
-
-        public static bool RemoveFirewallRule(string ruleName)
-        {
-            try
-            {
-                INetFwPolicy2 fwPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
-
-                List<string> rulesToRemove = new();
-
-                foreach (INetFwRule rule in fwPolicy.Rules)
-                {
-                    if (rule.Name.Contains(ruleName))
+                    if (await FirewallRuleExists(product.Name))
                     {
-                        rulesToRemove.Add(rule.Name);
+                        await RemoveFirewallRule(product.Name);
                     }
-                }
 
-                foreach (string name in rulesToRemove)
-                {
-                    fwPolicy.Rules.Remove(name);
-                }
+                    INetFwPolicy2 fwPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
+                    Type ruleType = Type.GetTypeFromProgID("HNetCfg.FwRule");
 
-                var product = Products.FirstOrDefault(p => p.Name == ruleName);
-                if (product != null)
-                {
-                    product.IsFirewallBlocked = false;
-                }
+                    var tasks = new[]
+                    {
+                        Task.Run(() => CreateInboundRule(product, ruleType)),
+                        Task.Run(() => CreateOutboundRule(product, ruleType))
+                    };
 
-                return true;
+                    var rules = await Task.WhenAll(tasks);
+
+                    foreach (var rule in rules)
+                    {
+                        fwPolicy.Rules.Add(rule);
+                    }
+
+                    product.IsFirewallBlocked = true;
+                    return true;
+                });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.WriteLine($"Error al eliminar regla de firewall: {ex.Message}");
                 return false;
             }
         }
+
+        public static async Task<bool> RemoveFirewallRule(string ruleName)
+        {
+            try
+            {
+                return await Task.Run(() =>
+                {
+                    INetFwPolicy2 fwPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
+
+                    foreach (string name in fwPolicy.Rules.Cast<INetFwRule>().Where(rule => rule.Name.Contains(ruleName))
+                                                    .Select(rule => rule.Name).ToList())
+                    {
+                        fwPolicy.Rules.Remove(name);
+                    }
+
+                    var product = Products.FirstOrDefault(p => p.Name == ruleName);
+                    if (product != null)
+                    {
+                        product.IsFirewallBlocked = false;
+                    }
+
+                    return true;
+                });
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private static INetFwRule CreateInboundRule(AdobeProduct product, Type ruleType)
+        {
+            INetFwRule rule = (INetFwRule)Activator.CreateInstance(ruleType);
+            rule.Name = $"{product.Name}";
+            rule.Description = $"Blocks inbound network access for {product.Name}, allowing you to use the software for free at the cost of losing online functionalities.";
+            rule.ApplicationName = product.ExecutablePath;
+            rule.Action = NET_FW_ACTION_.NET_FW_ACTION_BLOCK;
+            rule.Direction = NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_IN;
+            rule.Enabled = true;
+            rule.Profiles = (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL;
+            return rule;
+        }
+
+        private static INetFwRule CreateOutboundRule(AdobeProduct product, Type ruleType)
+        {
+            INetFwRule rule = (INetFwRule)Activator.CreateInstance(ruleType);
+            rule.Name = $"{product.Name}";
+            rule.Description = $"Blocks outbound network access for {product.Name}, allowing you to use the software for free at the cost of losing online functionalities.";
+            rule.ApplicationName = product.ExecutablePath;
+            rule.Action = NET_FW_ACTION_.NET_FW_ACTION_BLOCK;
+            rule.Direction = NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT;
+            rule.Enabled = true;
+            rule.Profiles = (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL;
+            return rule;
+        }
+
 
         private static BitmapImage GetLargeIconAsImageSource(string executablePath)
         {
@@ -234,9 +266,8 @@ namespace PrometheusActivator.Utilities
 
                 return bitmapImage;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.WriteLine($"Error al cargar el icono: {ex.Message}");
                 return null;
             }
         }

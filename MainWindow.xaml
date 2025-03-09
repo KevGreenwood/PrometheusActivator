@@ -8,12 +8,14 @@
         Title="MainWindow" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True">
-    <Grid>
+    <Grid Background="#202020">
         <ui:NavigationView
-     x:Name="NavigationViewControl"
-     IsBackButtonVisible="Collapsed" 
-     PaneDisplayMode="Left"
-     ItemInvoked="NavigationViewControl_ItemInvoked">
+            x:Name="NavigationViewControl"
+            IsBackButtonVisible="Collapsed" 
+            PaneDisplayMode="Left"
+            ItemInvoked="NavigationViewControl_ItemInvoked"
+            
+            >
 
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem Icon="Home" Content="Home" Tag="Pages.HomePage"/>

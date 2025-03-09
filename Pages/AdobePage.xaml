@@ -6,51 +6,22 @@
       xmlns:local="clr-namespace:PrometheusActivator.Pages"
       xmlns:utilities="clr-namespace:PrometheusActivator.Utilities"
       xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:controls="clr-namespace:PrometheusActivator.CustomControls"
       mc:Ignorable="d"
       d:DesignHeight="456" d:DesignWidth="800"
       Title="AdobePage">
 
-    <Grid Background="Black">
+    <Grid>
         <ScrollViewer>
             <ItemsControl ItemsSource="{Binding AdobeProducts}" Margin="16">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type utilities:AdobeProduct}">
-                        <Border Background="Gray"
-                                BorderBrush="White"
-                                BorderThickness="1"
-                                CornerRadius="4"
-                                Margin="0,0,0,8"
-                                Padding="16">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Icono -->
-                                <Image Source="{Binding Icon}" 
-                                       Width="32" 
-                                       Height="32" 
-                                       Margin="0,0,16,0"/>
-
-                                <!-- Información -->
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="{Binding Name}" 
-                                             FontWeight="SemiBold" 
-                                             FontSize="14"/>
-                                    <TextBlock Text="{Binding Version}" 
-                                             Opacity="0.7" 
-                                             Margin="0,4,0,0"/>
-                                </StackPanel>
-
-                                <!-- Toggle Switch -->
+                        <controls:SettingsCard Title="{Binding Name}" Description="{Binding Version}" Icon="{Binding Icon}">
+                            <controls:SettingsCard.ActionContent>
                                 <ui:ToggleSwitch Grid.Column="2"
-                                            IsOn="{Binding IsFirewallBlocked, Mode=TwoWay}"
-                                            OnContent="Bloqueado"
-                                            OffContent="Permitido"/>
-                            </Grid>
-                        </Border>
+                                    IsOn="{Binding IsFirewallBlocked, Mode=TwoWay}"/>
+                            </controls:SettingsCard.ActionContent>
+                        </controls:SettingsCard>    
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
