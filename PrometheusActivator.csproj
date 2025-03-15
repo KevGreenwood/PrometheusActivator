@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\PNG\Win11.png" />
+    <None Remove="Assets\SVG\adobe.svg" />
+    <None Remove="Assets\SVG\Icons\adobe.svg" />
+    <None Remove="Assets\SVG\Icons\office.svg" />
+    <None Remove="Assets\SVG\Icons\windows.svg" />
+    <None Remove="Assets\SVG\Office\2016.svg" />
+    <None Remove="Assets\SVG\Office\2021.svg" />
+    <None Remove="Assets\SVG\Office\365.svg" />
+    <None Remove="Assets\SVG\Windows\10.svg" />
+    <None Remove="Assets\SVG\Windows\11.svg" />
+    <None Remove="Assets\SVG\Windows\7.svg" />
+    <None Remove="Assets\SVG\Windows\7_color.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.24" />
+    <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
+    <PackageReference Include="System.Management.Automation" Version="7.2.24" />
+    <PackageReference Include="TaskScheduler" Version="2.12.1" />
+    <PackageReference Include="WPF-UI" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\PNG\Win11.png" />
+    <Resource Include="Assets\SVG\adobe.svg" />
+    <Resource Include="Assets\SVG\Icons\adobe.svg" />
+    <Resource Include="Assets\SVG\Icons\office.svg" />
+    <Resource Include="Assets\SVG\Icons\windows.svg" />
+    <Resource Include="Assets\SVG\Office\2016.svg" />
+    <Resource Include="Assets\SVG\Office\2021.svg" />
+    <Resource Include="Assets\SVG\Office\365.svg" />
+    <Resource Include="Assets\SVG\Windows\10.svg" />
+    <Resource Include="Assets\SVG\Windows\11.svg" />
+    <Resource Include="Assets\SVG\Windows\7.svg" />
+    <Resource Include="Assets\SVG\Windows\7_color.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Pages\AdobePage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+	<ItemGroup>
+	    <COMReference Include="NetFwTypeLib">
+		    <WrapperTool>tlbimp</WrapperTool>
+		    <VersionMinor>0</VersionMinor>
+		    <VersionMajor>1</VersionMajor>
+		    <Guid>58fbcf7c-e7a9-467c-80b3-fc65e8fcca08</Guid>
+		    <Lcid>0</Lcid>
+		    <Isolated>false</Isolated>
+		    <EmbedInteropTypes>true</EmbedInteropTypes>
+	    </COMReference>
+	</ItemGroup>
+
+</Project>

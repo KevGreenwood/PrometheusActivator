@@ -1,0 +1,50 @@
+﻿<Page x:Class="PrometheusActivator.Pages.AdobePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:PrometheusActivator.Pages"
+          xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/" xmlns:utilities="clr-namespace:PrometheusActivator.Utilities"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AdobePage"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    
+    <Grid>
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding AdobeProducts}" Margin="16">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type utilities:AdobeProduct}">
+                        <ui:CardControl
+                                Margin="4"
+                                Padding="20,10,20,10"
+                               >
+                            <ui:CardControl.Icon>
+                                <ui:ImageIcon Source="{Binding Icon}"/>
+                            </ui:CardControl.Icon>
+                            <ui:CardControl.Header>
+                                <StackPanel>
+                                    <ui:TextBlock
+                                Margin="0"
+                                FontTypography="BodyStrong"
+                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                Text="{Binding Name}"
+                                TextWrapping="WrapWithOverflow" />
+                                    <ui:TextBlock
+                                Appearance="Secondary"
+                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                Text="{Binding Version}"
+                                TextWrapping="WrapWithOverflow" />
+                                </StackPanel>
+                            </ui:CardControl.Header>
+                            <ui:ToggleSwitch IsChecked="{Binding IsFirewallBlocked, Mode=TwoWay}" Checked="ToggleSwitch_Checked" Unchecked="ToggleSwitch_Unchecked"/>
+                        </ui:CardControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Page>
