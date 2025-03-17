@@ -11,29 +11,14 @@ namespace PrometheusActivator.Pages
     /// </summary>
     public partial class AdobePage : Page
     {
-        public ObservableCollection<AdobeProduct> AdobeProducts { get; } = new();
+        public List<AdobeProduct> Products => AdobeHandler.Products;
 
 
         public AdobePage()
         {
-            DataContext = this;
-            LoadAdobeProducts();
-
-
             InitializeComponent();
-
-
+            DataContext = this;
         }
-
-        private async void LoadAdobeProducts()
-        {
-            await AdobeHandler.LoadProducts();
-            foreach (var product in AdobeHandler.Products)
-            {
-                AdobeProducts.Add(product);
-            }
-        }
-
 
         private void ToggleSwitch_Checked(object sender, RoutedEventArgs e)
         {

@@ -87,8 +87,6 @@ namespace PrometheusActivator.Utilities
             DisplayVersion = Registry.GetValue(WindowsPath, "DisplayVersion", null).ToString();
             UBR = Registry.GetValue(WindowsPath, "UBR", null).ToString();
 
-           
-            
             if (int.TryParse(Build, out var buildNumber) && buildNumber >= 22000)
             {
                 ProductName = ProductName.Replace("Windows 10", "Windows 11");
@@ -101,8 +99,6 @@ namespace PrometheusActivator.Utilities
                 LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win10.png"));
             }
             
-
-
             string[] products = { "Home", "Pro", "Education", "Enterprise", "Server" };
             ProductIndex = Array.FindIndex(products, p => ProductName.Contains(p));
 

@@ -38,10 +38,10 @@ namespace PrometheusActivator.Utilities
             foreach (var path in AdobePaths)
             {
                 if (!Directory.Exists(path)) continue;
-                var folders = Directory.EnumerateDirectories(path);
+                IEnumerable<string> folders = Directory.EnumerateDirectories(path);
                 foreach (var folder in folders)
                 {
-                    var executables = Directory.EnumerateFiles(folder, "*.exe", SearchOption.AllDirectories)
+                    IEnumerable<string> executables = Directory.EnumerateFiles(folder, "*.exe", SearchOption.AllDirectories)
                                                .Where(file => ExecutableNames.Contains(Path.GetFileName(file)));
                     foreach (var executable in executables)
                     {
@@ -54,8 +54,8 @@ namespace PrometheusActivator.Utilities
         public static async Task LoadProducts()
         {
             Products.Clear();
-            var executables = FindExecutables();
-            foreach (var executable in executables)
+            IEnumerable<string> executables = FindExecutables();
+            foreach (string executable in executables)
             {
                 FileVersionInfo info = FileVersionInfo.GetVersionInfo(executable);
                 string productName = info.ProductName ?? Path.GetFileNameWithoutExtension(executable);

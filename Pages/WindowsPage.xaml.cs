@@ -15,6 +15,12 @@ namespace PrometheusActivator.Pages
             InitializeComponent();
 
             Logo.Source = WindowsHandler.Logo;
+            ProductsCard.Text = "Lmao";
+        }
+
+        private void MethodCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
