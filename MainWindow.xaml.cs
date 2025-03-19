@@ -19,18 +19,8 @@ public partial class MainWindow : FluentWindow
         InitializeComponent();
 
         Loaded += (_, _) => RootNavigation.Navigate(typeof(WindowsPage));
-
-
-        //  WINDOWS 7 FIX
         WindowsHandler.InitializeAsync();
 
-        if (WindowsHandler.ProductName.Contains("Windows 7"))
-        {
-            System.Windows.MessageBox.Show("Unable to save file, try again.");
 
-            WindowsHandler.Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/7_color.svg");
-            WindowsHandler.ProductName = WindowsHandler.ProductName.Replace("Windows 7", "Windows 11");
-
-        }
     }
 }

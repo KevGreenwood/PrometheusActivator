@@ -20,6 +20,200 @@
             Height="100"
             VerticalAlignment="Center" />
 
+        <Expander
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Left"
+            Header="Product Information"
+            IsExpanded="True">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Operating System" />
+                <TextBlock
+                    x:Name="ProductName"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Version" />
+                <TextBlock
+                    x:Name="Version"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="License Status" />
+                <Grid Grid.Row="2" Grid.Column="1" />
+                <TextBlock
+                    x:Name="LicenseStatus"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Renewal Task Status" />
+                <Grid Grid.Row="3" Grid.Column="1" />
+                <TextBlock
+                    x:Name="RenewalStatus"
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Product Key Channel" />
+                <TextBlock
+                    x:Name="Channel"
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Partial Product Key" />
+                <TextBlock
+                    x:Name="PartialKey"
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+                <TextBlock
+                    Grid.Row="6"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Activation expires" />
+                <TextBlock
+                    x:Name="Expiration"
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+            </Grid>
+        </Expander>
+
+        <Expander
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Left"
+            Header="Advanced Information"
+            IsExpanded="False">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Activation ID" />
+                <TextBlock
+                    x:Name="ActID"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Extended PID" />
+                <TextBlock
+                    x:Name="ExPID"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="0,5"
+                    HorizontalAlignment="Left"
+                    Text="Extended PID" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="20,5"
+                    HorizontalAlignment="Left"
+                    Foreground="Gray" />
+
+
+
+
+
+            </Grid>
+        </Expander>
+
         <StackPanel Orientation="Vertical">
             <TextBlock
                 Margin="4"
@@ -130,7 +324,7 @@
 
         </StackPanel>
 
-        <StackPanel Margin="0, 20, 0, 0">
+        <StackPanel Margin="0,20,0,0">
             <TextBlock Margin="0,4" Style="{StaticResource BodyStrongTextBlockStyle}">Console</TextBlock>
             <TextBox
                 x:Name="ShellBox"
@@ -139,7 +333,7 @@
                 FontFamily="Consolas"
                 IsReadOnly="True"
                 TextWrapping="Wrap" />
-            <Grid Margin="0,15, 0, 0">
+            <Grid Margin="0,15,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />

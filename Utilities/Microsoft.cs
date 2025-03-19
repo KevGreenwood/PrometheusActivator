@@ -10,9 +10,9 @@ namespace PrometheusActivator.Utilities
     {
         private const string WindowsPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 
-        private static string DisplayVersion { get; set; }
-        public static string Build { get; set; }
-        private static string UBR { get; set; }
+        private static string DisplayVersion => Registry.GetValue(WindowsPath, "DisplayVersion", null).ToString();
+        public static string Build => Registry.GetValue(WindowsPath, "CurrentBuildNumber", null).ToString();
+        private static string UBR => Registry.GetValue(WindowsPath, "UBR", null).ToString();
         public static string ProductName { get; set; }
         public static string Platform => Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
         public static string Version => $"{DisplayVersion} ({Build}.{UBR})";
@@ -82,10 +82,7 @@ namespace PrometheusActivator.Utilities
 
         public static async Task InitializeAsync()
         {
-            Build = Registry.GetValue(WindowsPath, "CurrentBuildNumber", null).ToString();
             ProductName = Registry.GetValue(WindowsPath, "ProductName", null).ToString();
-            DisplayVersion = Registry.GetValue(WindowsPath, "DisplayVersion", null).ToString();
-            UBR = Registry.GetValue(WindowsPath, "UBR", null).ToString();
 
             if (int.TryParse(Build, out var buildNumber) && buildNumber >= 22000)
             {
