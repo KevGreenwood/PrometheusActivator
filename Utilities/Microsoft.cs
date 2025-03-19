@@ -10,13 +10,19 @@ namespace PrometheusActivator.Utilities
     {
         private const string WindowsPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 
-        private static string DisplayVersion => Registry.GetValue(WindowsPath, "DisplayVersion", null).ToString();
+
+        // 7 no
+        private static string DisplayVersion { get; set; }
+        private static string UBR { get; set; }
+
+
         public static string Build => Registry.GetValue(WindowsPath, "CurrentBuildNumber", null).ToString();
-        private static string UBR => Registry.GetValue(WindowsPath, "UBR", null).ToString();
+
+        // 7 no
         public static string ProductName { get; set; }
         public static string Platform => Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
-        public static string Version => $"{DisplayVersion} ({Build}.{UBR})";
-        public static string GetMinimalInfo { get; private set; }
+        public static string Version = Build;
+        public static string GetMinimalInfo = $"{ProductName} {Platform}";
         public static string GetAllInfo { get; private set; }
         public static string LicenseStatus { get; private set; }
         public static string ShellOutput { get; private set; }
@@ -95,7 +101,6 @@ namespace PrometheusActivator.Utilities
                 Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/10.svg");
                 //LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win10.png"));
             }
-            GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
             string[] products = { "Home", "Pro", "Education", "Enterprise", "Server" };
             ProductIndex = Array.FindIndex(products, p => ProductName.Contains(p));
 
@@ -109,6 +114,21 @@ namespace PrometheusActivator.Utilities
             {
                 LicenseIndex = Array.FindIndex(DClicenses, p => ProductName.Contains(p));
             }
+
+            if (!ProductName.Contains("Windows 7"))
+            {
+                DisplayVersion = Registry.GetValue(WindowsPath, "DisplayVersion", null).ToString();
+                UBR = Registry.GetValue(WindowsPath, "UBR", null).ToString();
+                Version = $"{DisplayVersion} ({Build}.{UBR})";
+                GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
+            }
+            else
+            {
+                Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/7_color.svg");
+            }
+
+
+
 
             GetAllInfo = $"Microsoft {ProductName} {Platform}";
 
