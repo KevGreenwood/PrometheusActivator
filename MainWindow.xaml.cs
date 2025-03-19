@@ -19,8 +19,5 @@ public partial class MainWindow : FluentWindow
         InitializeComponent();
 
         Loaded += (_, _) => RootNavigation.Navigate(typeof(WindowsPage));
-        WindowsHandler.InitializeAsync();
-
-
     }
 }

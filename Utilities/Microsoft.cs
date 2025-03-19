@@ -16,7 +16,7 @@ namespace PrometheusActivator.Utilities
         public static string ProductName { get; set; }
         public static string Platform => Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
         public static string Version => $"{DisplayVersion} ({Build}.{UBR})";
-        public static string GetMinimalInfo => $"{ProductName} {DisplayVersion} {Platform}";
+        public static string GetMinimalInfo { get; private set; }
         public static string GetAllInfo { get; private set; }
         public static string LicenseStatus { get; private set; }
         public static string ShellOutput { get; private set; }
@@ -93,9 +93,9 @@ namespace PrometheusActivator.Utilities
             else
             {
                 Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/10.svg");
-                LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win10.png"));
+                //LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win10.png"));
             }
-            
+            GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
             string[] products = { "Home", "Pro", "Education", "Enterprise", "Server" };
             ProductIndex = Array.FindIndex(products, p => ProductName.Contains(p));
 

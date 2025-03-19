@@ -16,7 +16,7 @@ namespace PrometheusActivator.Pages
 
 
             Logo.Source = WindowsHandler.Logo;
-            ProductName.Text = WindowsHandler.GetAllInfo;
+            ProductName.Text = WindowsHandler.GetMinimalInfo;
             Version.Text = WindowsHandler.Version;
         }
 
