@@ -247,24 +247,6 @@
             </ui:CardControl>
 
             <ui:CardControl
-                MinHeight="70"
-                Margin="4,0,4,0"
-                Padding="20,10,20,10"
-                Header="Product"
-                Icon="{ui:SymbolIcon Symbol=Laptop24}">
-                <ComboBox
-                    x:Name="ProductsCard"
-                    Width="310"
-                    VerticalAlignment="Center"
-                    SelectionChanged="MethodCombo_SelectionChanged">
-                    <ComboBoxItem Content="Traditional KMS (SLMGR)" />
-                    <ComboBoxItem Content="Online KMS" />
-                    <ComboBoxItem Content="Renew" />
-                    <ComboBoxItem Content="Rearm" />
-                </ComboBox>
-            </ui:CardControl>
-
-            <ui:CardControl
                 x:Name="LicensesCard"
                 MinHeight="70"
                 Margin="4,0,4,0"

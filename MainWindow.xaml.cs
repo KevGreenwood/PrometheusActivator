@@ -1,5 +1,4 @@
 ﻿using PrometheusActivator.Pages;
-using PrometheusActivator.Utilities;
 using Wpf.Ui.Controls;
 
 

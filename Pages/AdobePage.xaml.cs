@@ -1,5 +1,4 @@
 ﻿using PrometheusActivator.Utilities;
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;

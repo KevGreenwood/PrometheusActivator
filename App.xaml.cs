@@ -1,5 +1,4 @@
 ﻿using PrometheusActivator.Utilities;
-using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace PrometheusActivator;
@@ -14,7 +13,7 @@ public partial class App : Application
         base.OnStartup(e);
         await WindowsHandler.InitializeAsync();
 
-        
+
         await AdobeHandler.LoadProducts();
     }
 }
