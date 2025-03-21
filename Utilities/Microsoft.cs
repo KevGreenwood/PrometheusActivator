@@ -10,7 +10,7 @@ namespace PrometheusActivator.Utilities
         private static string ProductName = WindowsRK.GetValue("ProductName").ToString();
         private static string EditionID = WindowsRK.GetValue("EditionID").ToString();
 
-        public static string Build => WindowsRK.GetValue("CurrentBuildNumber").ToString();
+        public static int Build => Convert.ToInt32(WindowsRK.GetValue("CurrentBuildNumber").ToString());
         public static string Platform => Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
         private static string DisplayVersion { get; set; }
         private static string UBR { get; set; }
@@ -42,7 +42,7 @@ namespace PrometheusActivator.Utilities
                     UBR = WindowsRK.GetValue("UBR").ToString();
                     Version = $"{DisplayVersion} ({Build}.{UBR})";
 
-                    if (int.TryParse(Build, out var buildNumber) && buildNumber >= 22000)
+                    if (Build >= 22000)
                     {
                         ProductName = ProductName.Replace("Windows 10", "Windows 11");
                         Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/11.svg");
@@ -69,7 +69,7 @@ namespace PrometheusActivator.Utilities
                 EditionID = "EnterpriseSNB";
             }
 
-            if (EditionID == "ServerRdsh" && int.TryParse(Build, out var buildNumber) && buildNumber <= 17134)
+            if (EditionID == "ServerRdsh" && Build <= 17134)
             {
                 EditionID = "ServerRdsh134";
             }
