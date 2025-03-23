@@ -1,4 +1,4 @@
-﻿namespace PrometheusActivator.Utilities.Activators
+﻿namespace PrometheusActivator.Utilities.Activators.Keys
 {
     public class WindowsLicenses
     {

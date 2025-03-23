@@ -13,7 +13,14 @@ public partial class MainWindow : FluentWindow
     {
         DataContext = this;
 
-        Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
+        //Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
+
+        Wpf.Ui.Appearance.ApplicationThemeManager.Apply(
+          Wpf.Ui.Appearance.ApplicationTheme.Dark, // Theme type
+          Wpf.Ui.Controls.WindowBackdropType.Auto,  // Background type
+          true                                      // Whether to change accents automatically
+        );
+
 
         InitializeComponent();
 

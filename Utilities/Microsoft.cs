@@ -9,13 +9,15 @@ namespace PrometheusActivator.Utilities
         private static RegistryKey WindowsRK = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", false);
         private static string ProductName = WindowsRK.GetValue("ProductName").ToString();
         private static string EditionID = WindowsRK.GetValue("EditionID").ToString();
+        private static float CurrentVersion => float.Parse(WindowsRK.GetValue("CurrentVersion").ToString()) / 10f;
+
 
         public static int Build => Convert.ToInt32(WindowsRK.GetValue("CurrentBuildNumber").ToString());
         public static string Platform => Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
         private static string DisplayVersion { get; set; }
         private static string UBR { get; set; }
         public static string Version { get; set; }
-        public static string GetMinimalInfo { get; set; }
+        public static string GetMinimalInfo = $"{ProductName} {Platform}";
         public static string GetAllInfo { get; private set; }
 
         public static Uri Logo { get; set; }
@@ -23,39 +25,46 @@ namespace PrometheusActivator.Utilities
 
         public static async Task InitializeAsync()
         {
-            switch (ProductName)
+            switch (CurrentVersion)
             {
-                case string p when p.Contains("Windows 7"):
-                    UBR = WindowsRK.GetValue("CSDVersion").ToString();
+                case 6.1f:
                     Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/7.svg");
+                    UBR = WindowsRK.GetValue("CSDVersion").ToString();
                     Version = $"{UBR} ({Build})";
-                    GetMinimalInfo = $"{ProductName} {Platform}";
-
                     break;
 
-                case string p when p.Contains("Windows 8"):
+                case 6.2f:
                     Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/10.svg");
+                    Version = Build.ToString();
                     break;
 
-                case string p when p.Contains("Windows 10"):
-                    DisplayVersion = WindowsRK.GetValue("DisplayVersion").ToString();
-                    UBR = WindowsRK.GetValue("UBR").ToString();
-                    Version = $"{DisplayVersion} ({Build}.{UBR})";
+                case 6.3f:
+                    UBR = WindowsRK?.GetValue("UBR")?.ToString() ?? string.Empty;
 
-                    if (Build >= 22000)
+                    if (UBR == string.Empty)
                     {
-                        ProductName = ProductName.Replace("Windows 10", "Windows 11");
-                        Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/11.svg");
-                        LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win11.png"));
+                        Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/10.svg");
+                        Version = Build.ToString();
                     }
                     else
                     {
-                        Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/10.svg");
-                        //LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win10.png"));
+                        DisplayVersion = WindowsRK.GetValue("DisplayVersion").ToString();
+                        Version = $"{DisplayVersion} ({Build}.{UBR})";
+
+                        if (Build >= 22000)
+                        {
+                            ProductName = ProductName.Replace("Windows 10", "Windows 11");
+                            Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/11.svg");
+                            LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win11.png"));
+                        }
+                        else
+                        {
+                            Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/10.svg");
+                            //LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win10.png"));
+                        }
+
+                        GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
                     }
-
-                    GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
-
                     break;
             }
 
@@ -76,7 +85,7 @@ namespace PrometheusActivator.Utilities
 
             WindowsRK.Close();
 
-            GetAllInfo = $"Microsoft {ProductName} {Platform}";
+            GetAllInfo = $"{ProductName} {Platform}";
 
             Directory.SetCurrentDirectory(@"C:\Windows\System32");
             //ExtractLicenseStatus();

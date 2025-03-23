@@ -239,10 +239,10 @@
                     VerticalAlignment="Center"
                     SelectionChanged="MethodCombo_SelectionChanged"
                     Text="Select your Activation Method">
-                    <ComboBoxItem Content="Traditional KMS (SLMGR)" />
                     <ComboBoxItem Content="Online KMS" />
-                    <ComboBoxItem Content="Renew" />
-                    <ComboBoxItem Content="Rearm" />
+                    <ComboBoxItem Content="Traditional KMS (SLMGR)" />
+                    <ComboBoxItem Content="Renew (SLMGR)" />
+                    <ComboBoxItem Content="Rearm (SLMGR)" />
                 </ComboBox>
             </ui:CardControl>
 
@@ -251,7 +251,8 @@
                 MinHeight="70"
                 Margin="4,0,4,0"
                 Padding="20,10,20,10"
-                Icon="{ui:SymbolIcon Symbol=Key24}">
+                Icon="{ui:SymbolIcon Symbol=Key24}"
+                Visibility="Collapsed">
 
                 <ui:CardControl.Header>
                     <StackPanel>
@@ -280,7 +281,8 @@
                 MinHeight="70"
                 Margin="4,0,4,0"
                 Padding="20,10,20,10"
-                Icon="{ui:SymbolIcon Symbol=ServerMultiple20}">
+                Icon="{ui:SymbolIcon Symbol=ServerMultiple20}"
+                Visibility="Collapsed">
 
                 <ui:CardControl.Header>
                     <StackPanel>
@@ -301,7 +303,8 @@
                     x:Name="ServerCombo"
                     Width="310"
                     VerticalAlignment="Center"
-                    Text="Select your KMS Server" />
+                    Text="Select your KMS Server" 
+                    ItemsSource="{Binding Servers}"/>
             </ui:CardControl>
 
         </StackPanel>
@@ -328,7 +331,7 @@
                     HorizontalAlignment="Left"
                     Appearance="Success"
                     Content="Activate"
-                    IsEnabled="True" />
+                    IsEnabled="False" />
                 <ui:Button
                     x:Name="InfoButton"
                     Grid.Column="1"
@@ -340,7 +343,7 @@
                     HorizontalAlignment="Right"
                     Appearance="Danger"
                     Content="Remove Key"
-                    IsEnabled="True" />
+                    IsEnabled="False" />
             </Grid>
         </StackPanel>
     </StackPanel>
