@@ -2,24 +2,23 @@
 using System.IO;
 using System.Windows.Media.Imaging;
 
+
 namespace PrometheusActivator.Utilities
 {
     public static class WindowsHandler
     {
         private static RegistryKey WindowsRK = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", false);
-        private static string ProductName = WindowsRK.GetValue("ProductName").ToString();
-        private static string EditionID = WindowsRK.GetValue("EditionID").ToString();
-        private static float CurrentVersion => float.Parse(WindowsRK.GetValue("CurrentVersion").ToString()) / 10f;
-
-
-        public static int Build => Convert.ToInt32(WindowsRK.GetValue("CurrentBuildNumber").ToString());
-        public static string Platform => Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
-        private static string DisplayVersion { get; set; }
-        private static string UBR { get; set; }
+        public static string UBR { get; set; }
         public static string Version { get; set; }
+        public static string ProductName = WindowsRK.GetValue("ProductName").ToString();
+        public static string EditionID = WindowsRK.GetValue("EditionID").ToString();
+        public static float CurrentVersion = float.Parse(WindowsRK.GetValue("CurrentVersion").ToString()) / 10f;
+        public static int Build = Convert.ToInt32(WindowsRK.GetValue("CurrentBuildNumber").ToString());
         public static string GetMinimalInfo = $"{ProductName} {Platform}";
         public static string GetAllInfo { get; private set; }
-
+        private static string Platform = Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
+        private static string DisplayVersion { get; set; }
+      
         public static Uri Logo { get; set; }
         public static BitmapImage LogoPNG { get; private set; }
 
@@ -29,7 +28,7 @@ namespace PrometheusActivator.Utilities
             {
                 case 6.1f:
                     Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/7.svg");
-                    UBR = WindowsRK.GetValue("CSDVersion").ToString();
+                    UBR = WindowsRK.GetValue("CSDVersion")?.ToString() ?? string.Empty;
                     Version = $"{UBR} ({Build})";
                     break;
 
@@ -65,25 +64,21 @@ namespace PrometheusActivator.Utilities
 
                         GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
                     }
+                    WindowsRK.Close();
                     break;
             }
 
-            if (ProductName.Contains("Enterprise LTSB 2016"))
+            EditionID = ProductName switch
             {
-                EditionID = "EnterpriseSB";
-            }
-
-            if (ProductName.Contains("Enterprise N LTSB 2016"))
-            {
-                EditionID = "EnterpriseSNB";
-            }
+                string p when p.Contains("Enterprise LTSB 2016") => "EnterpriseSB",
+                string p when p.Contains("Enterprise N LTSB 2016") => "EnterpriseSNB",
+                _ => EditionID
+            };
 
             if (EditionID == "ServerRdsh" && Build <= 17134)
             {
                 EditionID = "ServerRdsh134";
             }
-
-            WindowsRK.Close();
 
             GetAllInfo = $"{ProductName} {Platform}";
 

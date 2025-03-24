@@ -269,11 +269,11 @@
                             TextWrapping="WrapWithOverflow" />
                     </StackPanel>
                 </ui:CardControl.Header>
-                <ComboBox
-                    x:Name="LicenseCombo"
+                <ui:TextBox
+                    x:Name="LicenseBox"
                     Width="310"
                     VerticalAlignment="Center"
-                    Text="Select your License Key" />
+                    PlaceholderText="XXXX-XXXX-XXXX-XXXX" />
             </ui:CardControl>
 
             <ui:CardControl
@@ -303,8 +303,8 @@
                     x:Name="ServerCombo"
                     Width="310"
                     VerticalAlignment="Center"
-                    Text="Select your KMS Server" 
-                    ItemsSource="{Binding Servers}"/>
+                    ItemsSource="{Binding Servers}"
+                    Text="Select your KMS Server" />
             </ui:CardControl>
 
         </StackPanel>

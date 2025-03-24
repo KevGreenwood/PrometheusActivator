@@ -7,7 +7,7 @@ namespace PrometheusActivator.Pages
     /// <summary>
     /// Lógica de interacción para WindowsPage.xaml
     /// </summary>
-    
+
     public partial class WindowsPage : Page
     {
         public List<string> Servers => KMS.Servers;
@@ -25,10 +25,12 @@ namespace PrometheusActivator.Pages
 
         private void MethodCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (MethodCombo.SelectedIndex <= 1 )
+            if (MethodCombo.SelectedIndex <= 1)
             {
                 LicensesCard.Visibility = System.Windows.Visibility.Visible;
                 ServerCard.Visibility = System.Windows.Visibility.Visible;
+                KMS.SelectLicense();
+                LicenseBox.PlaceholderText = KMS.key.License;
             }
             else
             {
