@@ -2,6 +2,7 @@
 using PrometheusActivator.Utilities.Activators;
 using System.Windows.Controls;
 
+
 namespace PrometheusActivator.Pages
 {
     /// <summary>
