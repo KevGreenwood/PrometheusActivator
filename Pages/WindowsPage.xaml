@@ -272,7 +272,7 @@
                 <ui:TextBox
                     x:Name="LicenseBox"
                     Width="310"
-                    VerticalAlignment="Center"/>
+                    VerticalAlignment="Center" />
             </ui:CardControl>
 
             <ui:CardControl

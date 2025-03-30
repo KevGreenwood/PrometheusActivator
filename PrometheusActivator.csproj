@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Pages\AdobePage.xaml.cs">
+    <Compile Update="Pages\FirewallPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

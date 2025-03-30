@@ -1,4 +1,6 @@
 ﻿using PrometheusActivator.Utilities.Activators.Keys;
+using System.Management;
+
 
 namespace PrometheusActivator.Utilities.Activators
 {
@@ -71,14 +73,10 @@ namespace PrometheusActivator.Utilities.Activators
                 { "2019", WindowsLicenses.Server19 },
                 { "2016", WindowsLicenses.Server16 }
             };
-
-            foreach (var entry in serverMap)
+            foreach (KeyValuePair<string, List<(string License, string Edition)>> entry in serverMap.Where(entry => WindowsHandler.ProductName.Contains(entry.Key)))
             {
-                if (WindowsHandler.ProductName.Contains(entry.Key))
-                {
-                    key = entry.Value.FirstOrDefault(x => x.Edition.Equals(WindowsHandler.EditionID, StringComparison.OrdinalIgnoreCase));
-                    break;
-                }
+                key = entry.Value.FirstOrDefault(x => x.Edition.Equals(WindowsHandler.EditionID, StringComparison.OrdinalIgnoreCase));
+                break;
             }
 
             Dictionary<string, List<(string License, string Edition)>> ubrMap = new()
@@ -87,15 +85,11 @@ namespace PrometheusActivator.Utilities.Activators
                 { "1803", WindowsLicenses.Server1803 },
                 { "1709", WindowsLicenses.Server1709 }
             };
-
-            foreach (var entry in ubrMap)
+            foreach (var entry in ubrMap.Where(entry => WindowsHandler.UBR.Contains(entry.Key)))
             {
-                if (WindowsHandler.UBR.Contains(entry.Key))
-                {
-                    key = entry.Value.FirstOrDefault(x => x.Edition.Equals(WindowsHandler.EditionID, StringComparison.OrdinalIgnoreCase));
-                    break;
-                }
+                key = entry.Value.FirstOrDefault(x => x.Edition.Equals(WindowsHandler.EditionID, StringComparison.OrdinalIgnoreCase));
+                break;
             }
-        }
+        } 
     }
 }

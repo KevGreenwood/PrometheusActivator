@@ -14,7 +14,7 @@ public partial class App : Application
         await WindowsHandler.InitializeAsync();
 
 
-        await AdobeHandler.LoadProducts();
+        await ProductHandler.LoadProducts();
     }
 }
 

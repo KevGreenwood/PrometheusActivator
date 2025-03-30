@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
-using System.IO;
+using System;
+using System.Management;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media.Imaging;
 
 
@@ -10,6 +12,7 @@ namespace PrometheusActivator.Utilities
         private static RegistryKey WindowsRK = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", false);
         public static string UBR { get; set; }
         public static string Version { get; set; }
+        public static string licenseKey { get; private set; }
         public static string ProductName = WindowsRK.GetValue("ProductName").ToString();
         public static string EditionID = WindowsRK.GetValue("EditionID").ToString();
         public static float CurrentVersion = float.Parse(WindowsRK.GetValue("CurrentVersion").ToString()) / 10f;
@@ -64,7 +67,6 @@ namespace PrometheusActivator.Utilities
 
                         GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
                     }
-                    WindowsRK.Close();
                     break;
             }
 
@@ -82,8 +84,28 @@ namespace PrometheusActivator.Utilities
 
             GetAllInfo = $"{ProductName} {Platform}";
 
-            Directory.SetCurrentDirectory(@"C:\Windows\System32");
-            //ExtractLicenseStatus();
+            GetLicenseKey();
+            WindowsRK.Close();
+            GetID();
+        }
+
+        public static void GetLicenseKey()
+        {
+            using ManagementObjectSearcher searcher = new("SELECT OA3xOriginalProductKey FROM SoftwareLicensingService");
+            licenseKey = searcher.Get().Cast<ManagementObject>()
+                                 .FirstOrDefault()?["OA3xOriginalProductKey"] as string ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(licenseKey) && WindowsRK != null)
+            {
+                licenseKey = WindowsRK.OpenSubKey("SoftwareProtectionPlatform")
+                                     .GetValue("BackupProductKeyDefault").ToString();
+            }
+        }
+        public static void GetID()
+        {
+            using ManagementObjectSearcher searcher = new("SELECT ID FROM SoftwareLicensingProduct WHERE(ApplicationID = '55c92734-d682-4d71-983e-d6ec3f16059f' AND PartialProductKey <> NULL AND LicenseDependsOn <> NULL)");
+            var lol = searcher.Get().Cast<ManagementObject>()
+                                 .FirstOrDefault()?["ID"] as string ?? string.Empty;
         }
     }
 }

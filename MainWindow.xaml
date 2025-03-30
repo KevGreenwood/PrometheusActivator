@@ -41,9 +41,9 @@
                     TargetPageType="{x:Type pages:WindowsPage}" />
                 <ui:NavigationViewItem Content="Office" Icon="{ui:SymbolIcon Symbol=Home24}" />
                 <ui:NavigationViewItem
-                    Content="Adobe"
-                    Icon="{ui:SymbolIcon Symbol=Home24}"
-                    TargetPageType="{x:Type pages:AdobePage}" />
+                    Content="Firewall Blocker"
+                    Icon="{ui:SymbolIcon Symbol=Fire24}"
+                    TargetPageType="{x:Type pages:FirewallPage}" />
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem Content="Settings" Icon="{ui:SymbolIcon Symbol=Settings24}" />
