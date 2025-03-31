@@ -65,7 +65,7 @@ namespace PrometheusActivator.Utilities
                     Name = productName,
                     Version = info.ProductVersion ?? "1.0.0",
                     ExecutablePath = executable,
-                    IsFirewallBlocked = FirewallManager.FirewallRuleExists(new Product { Name = productName }),
+                    IsFirewallBlocked = FirewallManager.FirewallRuleExists(),
                     Icon = await Task.Run(() => GetIcon(executable))
                 };
                 Products.Add(product);

@@ -199,8 +199,9 @@
                     Grid.Column="0"
                     Margin="0,5"
                     HorizontalAlignment="Left"
-                    Text="Extended PID" />
+                    Text="Product Key Channel" />
                 <TextBlock
+                    x:Name="ProdcutKC"
                     Grid.Row="2"
                     Grid.Column="1"
                     Margin="20,5"

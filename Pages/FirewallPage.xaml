@@ -50,11 +50,12 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
+
             <ui:Button
-                VerticalAlignment="Top"
+                HorizontalAlignment="Center"
+                Appearance="Primary"
                 Click="Button_Click"
                 Content="Add Program" />
-
         </StackPanel>
 
     </Grid>

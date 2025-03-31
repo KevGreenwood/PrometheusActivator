@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
-using System;
 using System.Management;
-using System.Windows.Controls.Primitives;
+using System.Text;
 using System.Windows.Media.Imaging;
 
 
@@ -12,11 +11,15 @@ namespace PrometheusActivator.Utilities
         private static RegistryKey WindowsRK = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", false);
         public static string UBR { get; set; }
         public static string Version { get; set; }
+        public static string ActID { get; set; }
+        public static string ProductKeyID = Encoding.Unicode.GetString((byte[])WindowsRK.GetValue("DigitalProductId4"), 0x08, 0x64);
+        public static string ProductKey = Encoding.Unicode.GetString((byte[])WindowsRK.GetValue("DigitalProductId4"), 0x3F8, 0x80);
+
         public static string licenseKey { get; private set; }
         public static string ProductName = WindowsRK.GetValue("ProductName").ToString();
         public static string EditionID = WindowsRK.GetValue("EditionID").ToString();
         public static float CurrentVersion = float.Parse(WindowsRK.GetValue("CurrentVersion").ToString()) / 10f;
-        public static int Build = Convert.ToInt32(WindowsRK.GetValue("CurrentBuildNumber").ToString());
+        public static int Build = Convert.ToInt32(WindowsRK.GetValue("CurrentBuildNumber"));
         public static string GetMinimalInfo = $"{ProductName} {Platform}";
         public static string GetAllInfo { get; private set; }
         private static string Platform = Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
@@ -86,7 +89,10 @@ namespace PrometheusActivator.Utilities
 
             GetLicenseKey();
             WindowsRK.Close();
-            GetID();
+
+            using ManagementObjectSearcher searcher = new("SELECT ID FROM SoftwareLicensingProduct WHERE ApplicationID='55c92734-d682-4d71-983e-d6ec3f16059f' AND PartialProductKey IS NOT NULL AND LicenseDependsOn IS NULL");
+            ActID = searcher.Get().Cast<ManagementObject>()
+                                 .FirstOrDefault()?["ID"] as string ?? string.Empty;
         }
 
         public static void GetLicenseKey()
@@ -100,12 +106,6 @@ namespace PrometheusActivator.Utilities
                 licenseKey = WindowsRK.OpenSubKey("SoftwareProtectionPlatform")
                                      .GetValue("BackupProductKeyDefault").ToString();
             }
-        }
-        public static void GetID()
-        {
-            using ManagementObjectSearcher searcher = new("SELECT ID FROM SoftwareLicensingProduct WHERE(ApplicationID = '55c92734-d682-4d71-983e-d6ec3f16059f' AND PartialProductKey <> NULL AND LicenseDependsOn <> NULL)");
-            var lol = searcher.Get().Cast<ManagementObject>()
-                                 .FirstOrDefault()?["ID"] as string ?? string.Empty;
         }
     }
 }

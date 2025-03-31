@@ -72,7 +72,7 @@ namespace PrometheusActivator.Pages
                         Name = productName,
                         Version = info.ProductVersion ?? "1.0.0",
                         ExecutablePath = filename,
-                        IsFirewallBlocked = FirewallManager.FirewallRuleExists(new Product { Name = productName }),
+                        IsFirewallBlocked = FirewallManager.FirewallRuleExists(),
                         Icon = ProductHandler.GetIcon(filename)
                     };
 

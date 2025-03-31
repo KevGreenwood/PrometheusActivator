@@ -5,12 +5,12 @@ namespace PrometheusActivator.Utilities
 {
     public static class FirewallManager
     {
-        public static bool FirewallRuleExists(Product product)
+        public static bool FirewallRuleExists()
         {
             try
             {
                 INetFwPolicy2 fwPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
-                return fwPolicy.Rules.Cast<INetFwRule>().Any(rule => rule.Name == product.Name);
+                return fwPolicy.Rules.Cast<INetFwRule>().Any(rule => rule.Description.EndsWith("limiting its online functionalities."));
             }
             catch (Exception)
             {
@@ -22,7 +22,7 @@ namespace PrometheusActivator.Utilities
         {
             try
             {
-                if (FirewallRuleExists(product))
+                if (FirewallRuleExists())
                 {
                     RemoveFirewallRule(product);
                 }
