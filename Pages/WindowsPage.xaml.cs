@@ -22,6 +22,7 @@ namespace PrometheusActivator.Pages
             Logo.Source = WindowsHandler.Logo;
             ProductName.Text = WindowsHandler.GetAllInfo;
             Version.Text = WindowsHandler.Version;
+            
             ActID.Text = WindowsHandler.ActID;
             ExPID.Text = WindowsHandler.ProductKeyID;
             ProdcutKC.Text = WindowsHandler.ProductKey;

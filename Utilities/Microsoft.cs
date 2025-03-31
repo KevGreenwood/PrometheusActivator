@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Management;
 using System.Text;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 
@@ -12,6 +13,7 @@ namespace PrometheusActivator.Utilities
         public static string UBR { get; set; }
         public static string Version { get; set; }
         public static string ActID { get; set; }
+        
         public static string ProductKeyID = Encoding.Unicode.GetString((byte[])WindowsRK.GetValue("DigitalProductId4"), 0x08, 0x64);
         public static string ProductKey = Encoding.Unicode.GetString((byte[])WindowsRK.GetValue("DigitalProductId4"), 0x3F8, 0x80);
 
@@ -19,8 +21,8 @@ namespace PrometheusActivator.Utilities
         public static string ProductName = WindowsRK.GetValue("ProductName").ToString();
         public static string EditionID = WindowsRK.GetValue("EditionID").ToString();
         public static float CurrentVersion = float.Parse(WindowsRK.GetValue("CurrentVersion").ToString()) / 10f;
-        public static int Build = Convert.ToInt32(WindowsRK.GetValue("CurrentBuildNumber"));
-        public static string GetMinimalInfo = $"{ProductName} {Platform}";
+        public static int Build = Convert.ToInt32(WindowsRK.GetValue("CurrentBuildNumber").ToString());
+        //public static string GetMinimalInfo = $"{ProductName} {Platform}";
         public static string GetAllInfo { get; private set; }
         private static string Platform = Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
         private static string DisplayVersion { get; set; }
@@ -44,12 +46,12 @@ namespace PrometheusActivator.Utilities
                     break;
 
                 case 6.3f:
-                    UBR = WindowsRK?.GetValue("UBR")?.ToString() ?? string.Empty;
+                    UBR = WindowsRK.GetValue("UBR")?.ToString() ?? string.Empty;
 
-                    if (UBR == string.Empty)
+                    if (ProductName.Contains("8.1"))
                     {
                         Logo = new Uri("pack://application:,,,/Assets/SVG/Windows/10.svg");
-                        Version = Build.ToString();
+                        Version = $"{Build}.{UBR}";
                     }
                     else
                     {
@@ -68,7 +70,7 @@ namespace PrometheusActivator.Utilities
                             //LogoPNG = new BitmapImage(new Uri("pack://application:,,,/Assets/PNG/Win10.png"));
                         }
 
-                        GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
+                        //GetMinimalInfo = $"{ProductName} {DisplayVersion} {Platform}";
                     }
                     break;
             }
@@ -87,24 +89,28 @@ namespace PrometheusActivator.Utilities
 
             GetAllInfo = $"{ProductName} {Platform}";
 
-            GetLicenseKey();
-            WindowsRK.Close();
+            
 
             using ManagementObjectSearcher searcher = new("SELECT ID FROM SoftwareLicensingProduct WHERE ApplicationID='55c92734-d682-4d71-983e-d6ec3f16059f' AND PartialProductKey IS NOT NULL AND LicenseDependsOn IS NULL");
             ActID = searcher.Get().Cast<ManagementObject>()
                                  .FirstOrDefault()?["ID"] as string ?? string.Empty;
+            GetLicenseKey();
+            WindowsRK.Close();
         }
 
         public static void GetLicenseKey()
         {
+
             using ManagementObjectSearcher searcher = new("SELECT OA3xOriginalProductKey FROM SoftwareLicensingService");
             licenseKey = searcher.Get().Cast<ManagementObject>()
                                  .FirstOrDefault()?["OA3xOriginalProductKey"] as string ?? string.Empty;
 
+
+
             if (string.IsNullOrWhiteSpace(licenseKey) && WindowsRK != null)
             {
                 licenseKey = WindowsRK.OpenSubKey("SoftwareProtectionPlatform")
-                                     .GetValue("BackupProductKeyDefault").ToString();
+                                     .GetValue("BackupProductKeyDefault")?.ToString() ?? string.Empty;
             }
         }
     }
