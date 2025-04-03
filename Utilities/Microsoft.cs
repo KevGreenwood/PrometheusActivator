@@ -91,43 +91,38 @@ namespace PrometheusActivator.Utilities
 
             
 
-            /*using ManagementObjectSearcher searcher = new("SELECT ID FROM SoftwareLicensingProduct WHERE ApplicationID='55c92734-d682-4d71-983e-d6ec3f16059f' AND PartialProductKey IS NOT NULL AND LicenseDependsOn IS NULL");
+            using ManagementObjectSearcher searcher = new("SELECT ID FROM SoftwareLicensingProduct WHERE (ApplicationID='55c92734-d682-4d71-983e-d6ec3f16059f' AND PartialProductKey <> NULL)");
             ActID = searcher.Get().Cast<ManagementObject>()
-                                 .FirstOrDefault()?["ID"] as string ?? string.Empty;*/
+                                 .FirstOrDefault()?["ID"] as string ?? string.Empty;
             GetLicenseKey();
             WindowsRK.Close();
         }
 
         public static void GetLicenseKey()
         {
-
-            /*using ManagementObjectSearcher searcher = new("SELECT OA3xOriginalProductKey FROM SoftwareLicensingService");
+            using ManagementObjectSearcher searcher = new("SELECT OA3xOriginalProductKey FROM SoftwareLicensingService");
             licenseKey = searcher.Get().Cast<ManagementObject>()
-                                 .FirstOrDefault()?["OA3xOriginalProductKey"] as string ?? string.Empty;*/
+                                 .FirstOrDefault()?["OA3xOriginalProductKey"] as string ?? string.Empty;
 
-
-            
-            
 
             if (string.IsNullOrWhiteSpace(licenseKey) && WindowsRK != null)
             {
                 switch (CurrentVersion)
                 {
                     case 6.1f:
-                        MessageBox.Show(LicenseKeyFinder.GetWindowsKey61(), "l0ol", MessageBoxButton.OK);
-
+                        MessageBox.Show(KeyFinder.GetWindowsKey61(), "l0ol", MessageBoxButton.OK);
                         break;
                     case 6.2f:
                     case 6.3f:
                         if (!ProductName.Contains("11"))
                         {
-                            MessageBox.Show(LicenseKeyFinder.GetWindowsKey62(), "l0ol", MessageBoxButton.OK);
+                            MessageBox.Show(KeyFinder.GetWindowsKey62(), "l0ol", MessageBoxButton.OK);
                         }
                         else
                         {
                             licenseKey = WindowsRK.OpenSubKey("SoftwareProtectionPlatform")
                                                  .GetValue("BackupProductKeyDefault")?.ToString() ?? string.Empty;
-                            MessageBox.Show(LicenseKeyFinder.GetWindowsKey62(), "l0ol", MessageBoxButton.OK);
+                            MessageBox.Show(KeyFinder.GetWindowsKey62(), "l0ol", MessageBoxButton.OK);
 
                         }
                         break;

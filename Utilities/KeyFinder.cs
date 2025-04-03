@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using Microsoft.Win32;
+﻿using System.Collections;
 
 
 namespace PrometheusActivator.Utilities
 {
     // Based on https://github.com/guilhermelim/Get-Windows-Product-Key
-    public static class LicenseKeyFinder
+    public static class KeyFinder
     {
         private static byte[] productKeyID = (byte[])WindowsHandler.WindowsRK.GetValue("DigitalProductId");
         private const string Digits = "BCDFGHJKMPQRTVWXY2346789";
@@ -17,7 +15,8 @@ namespace PrometheusActivator.Utilities
         public static string GetWindowsKey62()
         {
             string key = String.Empty;
-            productKeyID[66] &= 0xf7;
+            Span<byte> rawKey = new(productKeyID, keyOffset, 15);
+            rawKey[14] &= 0xf7;
 
             int last = 0;
             for (int i = 24; i >= 0; i--)
@@ -25,8 +24,8 @@ namespace PrometheusActivator.Utilities
                 int current = 0;
                 for (int j = 14; j >= 0; j--)
                 {
-                    current = productKeyID[j + keyOffset] + (current << 8);
-                    productKeyID[j + keyOffset] = (byte)(current / 24);
+                    current = rawKey[j] | (current << 8);
+                    rawKey[j] = (byte)(current / 24);
                     current %= 24;
                     last = current;
                 }
@@ -48,22 +47,18 @@ namespace PrometheusActivator.Utilities
         // For NT 6.1 (Windows 7 and lower)
         public static string GetWindowsKey61()
         {
-            const int keyEndIndex = keyOffset + 15;
-            var decodedChars = new char[decodeLength];
-            var hexPid = new ArrayList();
-            for (var i = keyOffset; i <= keyEndIndex; i++)
-            {
-                hexPid.Add(productKeyID[i]);
-            }
-            for (var i = decodeLength - 1; i >= 0; i--)
+            char[] decodedChars = new char[decodeLength];
+            Span<byte> rawKey = new(productKeyID, keyOffset, 15);
+
+            for (int i = decodeLength - 1; i >= 0; i--)
             {
                 if ((i + 1) % 6 != 0)
                 {
-                    var current = 0;
-                    for (var j = 14; j >= 0; j--)
+                    int current = 0;
+                    for (int j = 14; j >= 0; j--)
                     {
-                        current = (current << 8) | (byte)hexPid[j];
-                        hexPid[j] = (byte)(current / 24);
+                        current = (current << 8) | (byte)rawKey[j];
+                        rawKey[j] = (byte)(current / 24);
                         current %= 24;
                         decodedChars[i] = Digits[current];
                     }
