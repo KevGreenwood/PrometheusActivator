@@ -114,16 +114,13 @@ namespace PrometheusActivator.Utilities
                         break;
                     case 6.2f:
                     case 6.3f:
-                        if (!ProductName.Contains("11"))
+                        if (ProductName.Contains("11"))
                         {
                             MessageBox.Show(KeyFinder.GetWindowsKey62(), "l0ol", MessageBoxButton.OK);
                         }
                         else
                         {
-                            licenseKey = WindowsRK.OpenSubKey("SoftwareProtectionPlatform")
-                                                 .GetValue("BackupProductKeyDefault")?.ToString() ?? string.Empty;
                             MessageBox.Show(KeyFinder.GetWindowsKey62(), "l0ol", MessageBoxButton.OK);
-
                         }
                         break;
                 }
